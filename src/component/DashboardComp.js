@@ -1,20 +1,34 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import Switch from "@material-ui/core/Switch";
-import Grid from "@material-ui/core/Grid";
-import Slider from "@material-ui/core/Slider";
-import VolumeDown from "@material-ui/icons/VolumeDown";
-import VolumeUp from "@material-ui/icons/VolumeUp";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import Box from "@material-ui/core/Box";
+import React from "react"
+import { makeStyles } from "@material-ui/core/styles"
+import Card from "@material-ui/core/Card"
+import CardActions from "@material-ui/core/CardActions"
+import CardContent from "@material-ui/core/CardContent"
+import Typography from "@material-ui/core/Typography"
+import Switch from "@material-ui/core/Switch"
+import Grid from "@material-ui/core/Grid"
+import Slider from "@material-ui/core/Slider"
+import VolumeDown from "@material-ui/icons/VolumeDown"
+import VolumeUp from "@material-ui/icons/VolumeUp"
+import MenuItem from "@material-ui/core/MenuItem"
+import FormControl from "@material-ui/core/FormControl"
+import Select from "@material-ui/core/Select"
+import Box from "@material-ui/core/Box"
 
 export default function DashboardComp() {
+  // ******** States ***********
+  const [quality, setQuality] = React.useState("2")
+  const [volume, setVolume] = React.useState(" ")
+  const [online, setState] = React.useState({
+    isOnline: true,
+    isNotOnline: false,
+  })
+  const [notification, setNotification] = React.useState({
+    online: " ",
+    volume: " ",
+    quality: " ",
+  })
+
+  // ******** Styles ***********
   const useStyles = makeStyles({
     root: {
       maxWidth: 320,
@@ -33,31 +47,34 @@ export default function DashboardComp() {
     textAlign: {
       display: "inline-block",
       margin: "10px 240px",
-      // transform: "scale(.8)",
     },
-  });
-
-  const classes = useStyles();
-
-  const [state, setState] = React.useState({
-    checkedA: true,
-    checkedB: false,
   })
 
-  const handleChangeSwitch = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
-  };
+  const classes = useStyles()
 
-  function valuetext(value) {
-    return `${value}°C`;
+  // ********* Change functions **************
+  const handleVolumeChange = (event, newVolume) => {
+    setVolume(newVolume)
+    if (newVolume > 79) {
+      setNotification({
+        ...notification,
+        volume:
+          "Listening to music at a high volume could cause long-term hearing loss.",
+      })
+    } else {
+      setNotification({ ...notification, volume: " " })
+    }
   }
 
-  const [age, setAge] = React.useState("Normal");
+  const handleChangeSwitch = (event) => {
+    setState({ ...online, [event.target.name]: event.target.checked })
+  }
 
   const handleChangeSelect = (event) => {
-    setAge(event.target.value);
-  };
+    setQuality(event.target.value)
+  }
 
+  // *********** Page Body ************
   return (
     <div>
       <h2 className={classes.textAlign}>Welcome User,</h2>
@@ -66,7 +83,11 @@ export default function DashboardComp() {
         <Card className={classes.root} variant="outlined">
           <CardContent>
             <br />
-            <Typography variant="h5" component="h2" style= {{ fontWeight:"bold" }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              style={{ fontWeight: "bold" }}
+            >
               Online Mode
             </Typography>
             <br />
@@ -77,9 +98,9 @@ export default function DashboardComp() {
           </CardContent>
           <CardActions>
             <Switch
-              checked={state.checkedA}
+              checked={online.isOnline}
               onChange={handleChangeSwitch}
-              name="checkedA"
+              name="isOnline"
               inputProps={{ "aria-label": "secondary checkbox" }}
             />
           </CardActions>
@@ -89,7 +110,11 @@ export default function DashboardComp() {
         <Card className={classes.root} variant="outlined">
           <CardContent>
             <br />
-            <Typography variant="h5" component="h2" style= {{ fontWeight:"bold" }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              style={{ fontWeight: "bold" }}
+            >
               Master Volume
             </Typography>
             <br />
@@ -109,7 +134,8 @@ export default function DashboardComp() {
               <Grid item xs>
                 <Slider
                   defaultValue={30}
-                  getAriaValueText={valuetext}
+                  Value={volume}
+                  onChange={handleVolumeChange}
                   aria-labelledby="discrete-slider"
                   valueLabelDisplay="auto"
                   step={10}
@@ -129,7 +155,11 @@ export default function DashboardComp() {
         <Card className={classes.root} variant="outlined">
           <CardContent>
             <br />
-            <Typography variant="h5" component="h2" style= {{ fontWeight:"bold" }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              style={{ fontWeight: "bold" }}
+            >
               Sound Quality
             </Typography>
             <br />
@@ -141,15 +171,13 @@ export default function DashboardComp() {
           <CardActions>
             <FormControl className={classes.formControl}>
               <Select
-                value={age}
+                value={quality}
                 onChange={handleChangeSelect}
-                className={classes.selectEmpty}
-                style= {{ width:300 }}
-                inputProps={{ "aria-label": "Without label" }}
+                style={{ width: 300 }}
               >
-                <MenuItem value={"Low"}>Low</MenuItem>
-                <MenuItem value={"Normal"}>Normal</MenuItem>
-                <MenuItem value={"High"}>High</MenuItem>
+                <MenuItem value={"1"}>Low</MenuItem>
+                <MenuItem value={"2"}>Normal</MenuItem>
+                <MenuItem value={"3"}>High</MenuItem>
               </Select>
             </FormControl>
           </CardActions>
@@ -157,7 +185,8 @@ export default function DashboardComp() {
       </Box>
       <Box>
         <h3 className={classes.textAlign}>System Notification</h3>
+        <Typography> {notification.volume} </Typography>
       </Box>
     </div>
-  );
+  )
 }

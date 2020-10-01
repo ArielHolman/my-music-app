@@ -59,20 +59,38 @@ export default function DashboardComp() {
       setNotification({
         ...notification,
         volume:
-          "Listening to music at a high volume could cause long-term hearing loss.",
+          "*Listening to music at a high volume could cause long-term hearing loss.*",
       })
     } else {
       setNotification({ ...notification, volume: " " })
     }
-  }
+  };
 
   const handleChangeSwitch = (event) => {
     setState({ ...online, [event.target.name]: event.target.checked })
-  }
+    if (!event.target.checked) {
+          setNotification({
+            ...notification,
+            online:
+              "*Your application is offline. You won't be able to share or stream music to other devices.*",
+          });
+        } else {
+          setNotification({ ...notification, online: " " });
+        }
+  };
 
   const handleChangeSelect = (event) => {
     setQuality(event.target.value)
-  }
+    if (event.target.value === "1") {
+          setNotification({
+            ...notification,
+            quality:
+              "*Music quality is degraded. Increase quality if your connection allows it.*",
+          });
+        } else {
+          setNotification({ ...notification, quality: " " });
+        }
+  };
 
   // *********** Page Body ************
   return (
@@ -183,9 +201,11 @@ export default function DashboardComp() {
           </CardActions>
         </Card>
       </Box>
-      <Box>
-        <h3 className={classes.textAlign}>System Notification</h3>
-        <Typography> {notification.volume} </Typography>
+      <Box className={classes.textAlign}>
+        <h3>System Notification</h3>
+        <Typography style={{ color: "#F60157" }}> {notification.online} </Typography>
+        <Typography style={{ color: "#F60157" }}> {notification.volume} </Typography>
+        <Typography style={{ color: "#F60157" }}> {notification.quality} </Typography>
       </Box>
     </div>
   )
